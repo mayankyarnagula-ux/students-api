@@ -6,13 +6,13 @@ const userschema = new mongoose.Schema({
         type:String,
        
     },
-    age:{
-        type:Number,
-     
-    }, 
+    
     email:{
         type:String,
       
+    },
+    password:{
+        type:String,
     }
 })
 
