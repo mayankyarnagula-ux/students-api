@@ -31,7 +31,7 @@ res.send(user);
 res.send(err)
 }
 })
-app.get("/students",async(req,res)=>{
+app.get("/",async(req,res)=>{
 try{
 
     const user = await User.find();
