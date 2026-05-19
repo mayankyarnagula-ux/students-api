@@ -1,17 +1,36 @@
 const express = require('express');
 const app = express();
+const User = require("./model/User");
+const jwt= require("jsonwebtoken");
 const mongoose = require('mongoose');
-const User = require("./model/User")
 const bcrypt=require("bcrypt");
 const dns = require('dns');
 dns.setServers(['8.8.8.8', '1.1.1.1']);
 app.use(express.json());
 
+//dbconnect
 mongoose.connect("mongodb+srv://aitam:aitam123@aitam1.w8bdswp.mongodb.net/?appName=aitam1")
 .then(()=>{
     console.log("db connected")
 })
+//---------middleware--------
 
+const verifytoken = (req,res,next)=>{
+const token = req.headers.authorization;
+if(!token){
+    return res.send("token misssing");
+}
+
+try{
+
+    jwt.verify(token,"secretkey");
+    next();
+
+}catch(err){
+console.log("invalid token")
+}
+
+}
 
 //app.get('/',(req,res)=>{
   // res.send("Hello World")
@@ -31,7 +50,7 @@ res.send(user);
 res.send(err)
 }
 })
-app.get("/",async(req,res)=>{
+app.get("/",verifytoken,async(req,res)=>{
 try{
 
     const user = await User.find();
@@ -77,7 +96,7 @@ app.delete("/students/:id",async(req,res)=>{
     console.log(err)
 }
 })
-//sign
+//res
 app.post("/register", async(req,res)=>{
     
     try{
@@ -108,6 +127,50 @@ app.post("/register", async(req,res)=>{
     }
 
 })
+
+
+
+
+
+//login
+app.post("/login", async(req,res)=>{
+try{
+
+    const {email,password} = req.body;
+
+    const user = await User.findOne({email});
+
+    if(!user){
+        return res.end("user not found");
+    }
+
+
+    const ismatch = await bcrypt.compare(password,user.password);
+
+    if(!ismatch){
+        return res.end("inavlid pssword");
+    }
+
+   const token = jwt.sign(
+    {id:user._id},
+    "secretkey",
+    {expiresIn: "1h"}
+   )
+
+   res.send({
+    message: "login successful",
+    token
+   })
+
+
+   
+
+}catch(err){
+ console.log(err);
+}
+})
+
+
 app.listen(4000,()=>{
     console.log("server started")
 })
