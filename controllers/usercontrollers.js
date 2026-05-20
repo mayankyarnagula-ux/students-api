@@ -75,6 +75,37 @@ try{
     console.log(err)
 }
 }
+//register
+const Login=async(req,res)=>{
+    
+    try{
 
-module.exports={Addstudent,Delete,Update,Read,Sread}
+      const {name,email,password} = req.body;
+
+      const userExists = await User.findOne({email})
+
+      if(userExists){
+        return res.end("user already in db")
+      }
+
+    
+      const hashpassword = await bcrypt.hash(password,13);
+      console.log("hashpassword",hashpassword)
+
+
+      const user = new User({
+        name,
+        email,
+        password:hashpassword
+      })
+
+      await user.save();
+
+    }catch(err){
+        console.log(err);
+    }
+
+}
+
+module.exports={Addstudent,Delete,Update,Read,Sread,Login}
 

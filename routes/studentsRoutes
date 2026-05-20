@@ -1,12 +1,15 @@
 
 const express = require("express");
 const router = express.Router();
+//const jwt= require("jsonwebtoken");
 
 const {Addstudent} = require("../controllers/usercontrollers");
 const {Delete} = require("../controllers/usercontrollers");
-const {Update}=require("../controllers/usercontrollers")
-const {Read}=require("../controllers/usercontrollers")
-const {Sread}=require("../controllers/usercontrollers")
+const {Update}=require("../controllers/usercontrollers");
+const {Read}=require("../controllers/usercontrollers");
+const {Sread}=require("../controllers/usercontrollers");
+const {Login}=require("../controllers/usercontrollers");
+//const {Token}=require("../controllers/usercontrollers");
 
 
 router.post("/students/add",Addstudent);
@@ -14,4 +17,6 @@ router.delete("/students/:id",Delete);
 router.put("/students/update/:id",Update);
 router.get("/students/:id",Read);
 router.get("/students",Sread);
+router.post("/login",Login);
+//router.verfiytoken(Token);
 module.exports = router;
