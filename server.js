@@ -1,18 +1,19 @@
 const express = require('express');
 const app = express();
-const User = require("./model/User");
+const studentsRoutes=require("./routes/studentsRoutes")
 const jwt= require("jsonwebtoken");
-const mongoose = require('mongoose');
+const User=require('./model/User')
+const db=require("./config/db")
 const bcrypt=require("bcrypt");
 const dns = require('dns');
+require('dotenv').config()
 dns.setServers(['8.8.8.8', '1.1.1.1']);
 app.use(express.json());
+app.use(studentsRoutes);
 
 //dbconnect
-mongoose.connect("mongodb+srv://aitam:aitam123@aitam1.w8bdswp.mongodb.net/?appName=aitam1")
-.then(()=>{
-    console.log("db connected")
-})
+db();
+
 //---------middleware--------
 
 const verifytoken = (req,res,next)=>{
@@ -37,31 +38,8 @@ console.log("invalid token")
 //})
 
 
-app.post("/students/add",async(req,res)=>{
-try{
 
-const user = new User(req.body);
-
-await user.save();
-
-res.send(user);
-        
-}catch(err){
-res.send(err)
-}
-})
-app.get("/",verifytoken,async(req,res)=>{
-try{
-
-    const user = await User.find();
-
-    res.send(user);
-
-}catch(err){
-    console.log(err)
-}
-})
-
+//update
 app.put("/students/update/:id",async(req,res)=>{
   
      try{
@@ -127,10 +105,6 @@ app.post("/register", async(req,res)=>{
     }
 
 })
-
-
-
-
 
 //login
 app.post("/login", async(req,res)=>{

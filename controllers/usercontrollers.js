@@ -1,30 +1,19 @@
 const User = require("../model/User");
-const bcrypt = require("bcrypt");
 
-// REGISTER
-exports.register = async (req, res) => {
-    try {
-        const { name, email, password } = req.body;
+//add
+const Addstudent=async(req,res)=>{
+try{
 
-        const userExists = await User.findOne({ email });
-        if (userExists) {
-            return res.send("user already exists");
-        }
+const user = new User(req.body);
 
-        const hash = await bcrypt.hash(password, 10);
+await user.save();
 
-        const user = new User({
-            name,
-            email,
-            password: hash
-        });
+res.send(user);
+        
+}catch(err){
+res.send(err)
+}
+}
 
-        await user.save();
-
-        res.send("user registered");
-
-    } catch (err) {
-        res.send(err.message);
-    }
-};
+module.exports={Addstudent}
 
