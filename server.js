@@ -40,41 +40,36 @@ console.log("invalid token")
 
 
 //update
-app.put("/students/update/:id",async(req,res)=>{
-  
-     try{
 
-        const user = await User.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            {new:true}
+//read the data
+//To read the data 
+//app.get("/students",async(req,res)=>{
+//try{
 
-        )
+    //const user = await User.find();
 
-        res.send(user);
+  //  res.send(user);
 
-     }catch(err){
+//}catch(err){
+  //  console.log(err)
+//}
+//})
+//toread single data
+//app.get("/students/:id",async(req,res)=>{
 
-     }
-
-})
-
-//delete
-app.delete("/students/:id",async(req,res)=>{
-
-    try{
+  //  try{
    
 
-        const user = await User.findByIdAndDelete(req.params.id);
-       res.send("user deleted");
+    //    const user = await User.findById(req.params.id);
+      // res.send(user);
 
 
 
-    }catch(err){
-    console.log(err)
-}
-})
-//res
+    //}catch(err){
+    //console.log(err)
+//}
+//})
+
 app.post("/register", async(req,res)=>{
     
     try{
