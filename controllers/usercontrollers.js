@@ -48,20 +48,35 @@ const Update=async(req,res)=>{
      }
 
 }
-//read single data
-const Read=async(req,res)=>{
-
+//register
+const Register=async(req,res)=>{
+    
     try{
-   
 
-        const user = await User.findById(req.params.id);
-       res.send(user);
+      const {name,email,password} = req.body;
+
+      const userExists = await User.findOne({email})
+
+      if(userExists){
+        return res.end("user already in db")
+      }
+
+      const hashpassword = await bcrypt.hash(password,13);
+      console.log("hashpassword",hashpassword)
 
 
+      const user = new User({
+        name,
+        email,
+        password: hashpassword
+      })
+
+      await user.save();
 
     }catch(err){
-    console.log(err)
-}
+        console.log(err);
+    }
+
 }
 //single dataread
 const Sread=async(req,res)=>{
@@ -75,37 +90,50 @@ try{
     console.log(err)
 }
 }
-//register
-const Login=async(req,res)=>{
-    
-    try{
+const Read=async(req,res)=>{
+try{
 
-      const {name,email,password} = req.body;
+    const user = await User.find();
 
-      const userExists = await User.findOne({email})
+    res.send(user);
 
-      if(userExists){
-        return res.end("user already in db")
-      }
-
-    
-      const hashpassword = await bcrypt.hash(password,13);
-      console.log("hashpassword",hashpassword)
-
-
-      const user = new User({
-        name,
-        email,
-        password:hashpassword
-      })
-
-      await user.save();
-
-    }catch(err){
-        console.log(err);
-    }
-
+}catch(err){
+    console.log(err)
+}
 }
 
-module.exports={Addstudent,Delete,Update,Read,Sread,Login}
+const Login= async(req,res)=>{
+try{
+
+    const {email,password} = req.body;
+
+    const user = await User.findOne({email});
+
+    if(!user){
+        return res.end("user not found");
+    }
+
+
+    const ismatch = await bcrypt.compare(password,user.password);
+
+    if(!ismatch){
+        return res.end("inavlid pswrd");
+    }
+
+   const token = jwt.sign(
+    {id:user._id},
+    "secretkey",
+    {expiresIn: "1h"}
+   )
+
+   res.send({
+    message: "login successful",
+    token
+   })
+   }catch(err){
+ console.log(err);
+}
+}
+
+module.exports={Addstudent,Delete,Update,Read,Sread,Register,Login}
 
